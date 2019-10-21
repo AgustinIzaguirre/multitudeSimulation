@@ -1,0 +1,10 @@
+# Output files except Output/output0.xyz
+Output/*
+!Output/output0.xyz
+
+# IntelliJ
+*.iml
+**idea
+
+#Compiled Files
+**target
