@@ -54,6 +54,7 @@ public class ContractileParticleModel {
     }
 
     private void generateParticles(int particlesQuantity) {
+        particles = new ArrayList<>();
         for(int i = 0; i < particlesQuantity; i++) {
             Point2D newPosition = getNewParticlePosition();
             Point2D initialVelocity = getInitialVelocity(newPosition);
@@ -67,7 +68,7 @@ public class ContractileParticleModel {
         boolean validPosition = false;
         double maxSpaceAvailable, centerDistance, angle;
         Point2D newParticlePosition = null;
-        while(validPosition) {
+        while(!validPosition) {
             maxSpaceAvailable = externalWallRadius - (2 * MAX_RADIUS + internalWallRadius);
             centerDistance = random.nextDouble() * (maxSpaceAvailable) + MAX_RADIUS;
             angle = random.nextDouble() * 2.0 * Math.PI;
@@ -109,7 +110,6 @@ public class ContractileParticleModel {
         int step = 0;
         BufferedWriter writer = initOutput(step);
         while(time < maxTime) {
-//            generateVisualOutput();
             particles = findContactsAndUpdateEscapeVelocity(particles);
             particles = updateRadius(particles);
             particles = calculateParticleVelocities(particles);
