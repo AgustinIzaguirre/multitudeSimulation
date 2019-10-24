@@ -7,46 +7,25 @@ public class Particle {
     private final double radius;
     private final Point2D position;
     private final Point2D velocity;
-    private final Point2D acceleration;
-    private boolean isDown;
-
-    private final Point2D previousAcceleration;
 
 
-    public Particle(int id, double radius, Point2D position, Point2D velocity ,
-                    Point2D acceleration, Point2D previousAcceleration, boolean isDown) {
+
+    public Particle(int id, double radius, Point2D position, Point2D velocity) {
         this.id = id;
         this.radius = radius;
         this.position = new Point2D(position.getX(), position.getY());
-        this.isDown = isDown;
         if(velocity != null) {
             this.velocity = new Point2D(velocity.getX(), velocity.getY());
         }
         else {
             this.velocity = null;
         }
-        if(acceleration != null) {
-            this.acceleration = new Point2D(acceleration.getX(), acceleration.getY());
-        }
-        else {
-            this.acceleration = null;
-        }
-        if(previousAcceleration != null) {
-            this.previousAcceleration = new Point2D(previousAcceleration.getX(), previousAcceleration.getY());
-        }
-        else {
-            this.previousAcceleration = null;
-        }
     }
 
-    public Particle(int id, double radius, Point2D position, Point2D velocity, Point2D acceleration) {
-        this(id, radius, position, velocity, acceleration, null, false);
-    }
 
-    public Particle copy(Point2D position, Point2D velocity, Point2D acceleration,
-                         Point2D previousAcceleration, boolean isDown) {
-        return new Particle(id, radius, position, velocity, acceleration,
-                previousAcceleration, isDown);
+
+    public Particle copy(Point2D position, Point2D velocity) {
+        return new Particle(id, radius, position, velocity);
 
     }
 
@@ -85,14 +64,6 @@ public class Particle {
                 + "\t" + velocity.getX() + "\t" + velocity.getY() + "\t" + getSpeed();
     }
 
-    public Point2D getAcceleration() {
-        return acceleration;
-    }
-
-    public Point2D getPreviousAcceleration() {
-        return previousAcceleration;
-    }
-
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -106,15 +77,4 @@ public class Particle {
         return getId() == ((Particle) other).getId();
     }
 
-    public boolean IsDown() {
-        return isDown;
-    }
-
-    public Particle setIsDown(boolean isDown) {
-        return copy(position, velocity, acceleration, previousAcceleration, isDown);
-    }
-
-    public double getPerimeter() {
-        return 2 * Math.PI * getRadius();
-    }
 }
