@@ -10,16 +10,16 @@ public class StatisticGenerator {
     public static void main(String[] args) throws IOException, InvalidArgumentException {
         double internalWallRadius = 2;
         double externalWallRadius = 4;
-        generateFundamentalDiagramOutput(internalWallRadius,externalWallRadius, 10);
+        generateFundamentalDiagramOutput(internalWallRadius,externalWallRadius, 1);
     }
 
     public static void generateFundamentalDiagramOutput(double internalWallRadius, double externalWallRadius, int runs) throws IOException, InvalidArgumentException {
         String path = "Output/Results/";
         double totalArea = Math.PI * (Math.pow(externalWallRadius, 2) - Math.pow(internalWallRadius, 2));
         for(int particleQuantity = 5; particleQuantity <= 50; particleQuantity += 5) {
-            double density = totalArea / particleQuantity;
+            double density = particleQuantity / totalArea;
             for(int i = 0; i < runs; i++) {
-                String resultFilePath = path + density + "_ext" + externalWallRadius + "_int" + internalWallRadius + "_q" + particleQuantity + "_run" + i + ".txt";
+                String resultFilePath = path + particleQuantity + "_ext" + externalWallRadius + "_int" + internalWallRadius + "_run" + i + ".txt";
                 FileWriter resultFile = new FileWriter(resultFilePath);
                 BufferedWriter resultWriter = new BufferedWriter(resultFile);
                 resultWriter.write("time,positionx,positiony,speedProjected,radius,density\n");
