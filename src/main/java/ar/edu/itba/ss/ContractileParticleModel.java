@@ -121,7 +121,9 @@ public class ContractileParticleModel {
                 System.out.println(time);
                 printParticles(writer);
                 writer.close();
-                writer = initOutput(step);
+                if(time < maxTime) {
+                    writer = initOutput(step);
+                }
             }
         }
 
