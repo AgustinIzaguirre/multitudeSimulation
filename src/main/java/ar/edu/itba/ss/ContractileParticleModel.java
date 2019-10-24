@@ -109,7 +109,11 @@ public class ContractileParticleModel {
         double time = 0;
         int step = 0;
         BufferedWriter writer = initOutput(step);
+        printParticles(writer);
+        writer.close();
+
         while(time < maxTime) {
+            writer = initOutput(step);
             particles = findContactsAndUpdateEscapeVelocity(particles);
             particles = updateRadius(particles);
             particles = calculateParticleVelocities(particles);
@@ -121,9 +125,6 @@ public class ContractileParticleModel {
                 System.out.println(time);
                 printParticles(writer);
                 writer.close();
-                if(time < maxTime) {
-                    writer = initOutput(step);
-                }
             }
         }
 
