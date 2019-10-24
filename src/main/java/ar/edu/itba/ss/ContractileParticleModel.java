@@ -70,7 +70,7 @@ public class ContractileParticleModel {
         Point2D newParticlePosition = null;
         while(!validPosition) {
             maxSpaceAvailable = externalWallRadius - (2 * MAX_RADIUS + internalWallRadius);
-            centerDistance = random.nextDouble() * (maxSpaceAvailable) + MAX_RADIUS;
+            centerDistance = random.nextDouble() * (maxSpaceAvailable) + internalWallRadius;
             angle = random.nextDouble() * 2.0 * Math.PI;
             newParticlePosition = getPosition(centerDistance, angle);
             if (!isOverlapping(newParticlePosition)) {
