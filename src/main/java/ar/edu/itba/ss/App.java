@@ -11,7 +11,7 @@ import java.io.IOException;
 public class App 
 {
     public static void main( String[] args ) throws InvalidArgumentException, IOException {
-        ContractileParticleModel contractileParticleModel = new ContractileParticleModel(2, 6, 5, 1);
+        ContractileParticleModel contractileParticleModel = new ContractileParticleModel(2, 6, 20, 1);
         contractileParticleModel.perform(50);
     }
 }
