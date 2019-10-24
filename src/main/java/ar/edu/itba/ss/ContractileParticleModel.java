@@ -211,9 +211,22 @@ public class ContractileParticleModel {
         for(Particle particle : particles) {
             Point2D deltaPosition = particle.getVelocity().multiply(DT);
             Point2D newPosition = particle.getPosition().add(deltaPosition); //TODO maybe validate boundaries?
+            newPosition = restrainPosition(newPosition);
             newParticles.add(new Particle(particle.getId(), particle.getRadius(), newPosition, particle.getVelocity(), particle.isEscapeVelocity()));
         }
         return newParticles;
+    }
+
+    private Point2D restrainPosition(Point2D newPosition) {
+        if(newPosition.magnitude() < internalWallRadius) {
+            return newPosition.normalize().multiply(internalWallRadius);
+        }
+        else if(newPosition.magnitude() > externalWallRadius) {
+            return newPosition.normalize().multiply(externalWallRadius);
+        }
+        else {
+            return newPosition;
+        }
     }
 
     private BufferedWriter initOutput(int step) throws IOException {
@@ -222,7 +235,7 @@ public class ContractileParticleModel {
             writer = new BufferedWriter(new FileWriter("./Output/output" + idFile + ".xyz"));
             idFile++;
             writer.write(particles.size() + "\n");
-            writer.write("Lattice=\"" + MAX_RADIUS + " 0.0 0.0 0.0 " + MAX_RADIUS + " 0.0 0.0 0.0 1.0\" Properties=Id:R:1:Radius:R:1:Pos:R:2:Velocity:R:2:Speed:R:1 \n");
+            writer.write("Lattice=\"" + externalWallRadius + " 0.0 0.0 0.0 " + externalWallRadius + " 0.0 0.0 0.0 1.0\" Properties=Id:R:1:Radius:R:1:Pos:R:2:Velocity:R:2:Speed:R:1 \n");
         }
         return writer;
     }
