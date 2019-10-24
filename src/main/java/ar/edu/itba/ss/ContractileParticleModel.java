@@ -99,13 +99,61 @@ public class ContractileParticleModel {
     public void perform(double maxTime) {
         double time = 0;
         while(time < maxTime) {
-//            particles = findContactsAndUpdateEscapeVelocity(particles);
-//            particles = updateRadius(particles);
+            particles = findContactsAndUpdateEscapeVelocity(particles);
+            particles = updateRadius(particles);
 //            particles = calculateParticleVelocities(particles);
 //            particles = updateParticlesPosition(particles);
             cellIndexMethod.nextStep(particles);
             time += DT;
         }
 
+    }
+
+
+
+    private List<Particle> findContactsAndUpdateEscapeVelocity(List<Particle> particles) {
+        List<Particle> newParticles = new ArrayList<>();
+        Point2D escapeVelocity = Point2D.ZERO;
+        for(Particle particle : particles) {
+            List<Particle> neighbours = cellIndexMethod.findNeighbors(particle);
+            for(Particle neighbour : neighbours) {
+                escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, neighbour));
+            }
+            if(escapeVelocity.getX() == 0 && escapeVelocity.getY() == 0) {
+                newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(),
+                                                                    particle.getVelocity(), false));
+            }
+            else {
+                escapeVelocity = escapeVelocity.normalize().multiply(DESIRED_SPEED);
+                newParticles.add(new Particle(particle.getId(), MIN_RADIUS, particle.getPosition(),
+                                                                    escapeVelocity, true));
+
+            }
+        }
+        
+        return newParticles;
+    }
+
+    private Point2D getEscapeVelocity(Particle currentParticle, Particle neighbour) {
+        Point2D escapeVector = currentParticle.getPosition().subtract(neighbour.getPosition());
+        double distance = escapeVector.magnitude();
+        if(distance < currentParticle.getRadius() + neighbour.getRadius()) {
+            return escapeVector.normalize();
+        }
+        else {
+            return Point2D.ZERO;
+        }
+    }
+
+    private List<Particle> updateRadius(List<Particle> particles) {
+        List<Particle> newParticles = new ArrayList<>();
+        for(Particle particle : particles) {
+            double deltaRadius = MAX_RADIUS / (TAU / DT);
+            double newRadius = Math.min(MAX_RADIUS, particle.getRadius() + deltaRadius);
+            newParticles.add(new Particle(particle.getId(), newRadius, particle.getPosition(),
+                    particle.getVelocity(), particle.isEscapeVelocity()));
+        }
+
+        return newParticles;
     }
 }
