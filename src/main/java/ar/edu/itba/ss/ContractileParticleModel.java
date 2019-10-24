@@ -18,7 +18,7 @@ public class ContractileParticleModel {
     private static final double DT              = 0.05;
     private static final double DESIRED_SPEED   = 1.55;
     private static final double ESCAPE_SPEED    = DESIRED_SPEED;
-    private static final int STEPS_TO_PRINT     = 1;
+    private static final int STEPS_TO_PRINT     = 2;
 
     private static int particlesQuantity;
     private List<Wall> walls;

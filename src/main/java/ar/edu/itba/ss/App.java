@@ -17,6 +17,6 @@ public class App
 //        System.out.println("disk area: " + diskArea + "\n");
 //        System.out.println("max disk quantity: " + Math.floor(totalArea / diskArea) + "\n");
         ContractileParticleModel contractileParticleModel = new ContractileParticleModel(2, 4, 53, 1);
-        contractileParticleModel.perform(50);
+        contractileParticleModel.perform(100);
     }
 }
