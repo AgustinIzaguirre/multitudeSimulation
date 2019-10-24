@@ -132,8 +132,8 @@ public class ContractileParticleModel {
 
     private List<Particle> findContactsAndUpdateEscapeVelocity(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
-        Point2D escapeVelocity = Point2D.ZERO;
         for(Particle particle : particles) {
+            Point2D escapeVelocity = Point2D.ZERO;
             for(Wall wall : walls) {
                 escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, wall));
             }
