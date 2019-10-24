@@ -11,7 +11,12 @@ import java.io.IOException;
 public class App 
 {
     public static void main( String[] args ) throws InvalidArgumentException, IOException {
-        ContractileParticleModel contractileParticleModel = new ContractileParticleModel(2, 6, 20, 1);
+//        double totalArea = Math.PI * 12;
+//        double diskArea = Math.PI * Math.pow(0.32,2);
+//        System.out.println("total area: " + totalArea + "\n");
+//        System.out.println("disk area: " + diskArea + "\n");
+//        System.out.println("max disk quantity: " + Math.floor(totalArea / diskArea) + "\n");
+        ContractileParticleModel contractileParticleModel = new ContractileParticleModel(2, 4, 40, 1);
         contractileParticleModel.perform(50);
     }
 }

@@ -18,6 +18,10 @@ public class Wall {
         }
     }
 
+    public double getRadius() {
+        return radius;
+    }
+
     public Point2D getDistance(Particle particle) {
         double particleCenterDistance = particle.getPosition().magnitude();
         double distance = Math.abs(radius - particleCenterDistance);

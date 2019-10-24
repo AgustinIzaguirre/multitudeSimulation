@@ -169,6 +169,9 @@ public class ContractileParticleModel {
 
     private Point2D getEscapeVelocity(Particle currentParticle, Wall wall) {
         Point2D escapeVector = currentParticle.getPosition();
+        if(wall.getRadius() == externalWallRadius) {
+            escapeVector = escapeVector.multiply(-1);
+        }
         double distance = wall.getDistance(currentParticle).magnitude();
         if(distance < currentParticle.getRadius()) {
             return escapeVector.normalize();
@@ -219,10 +222,10 @@ public class ContractileParticleModel {
 
     private Point2D restrainPosition(Point2D newPosition) {
         if(newPosition.magnitude() < internalWallRadius) {
-            return newPosition.normalize().multiply(internalWallRadius);
+            return newPosition.normalize().multiply(internalWallRadius + MIN_RADIUS);
         }
         else if(newPosition.magnitude() > externalWallRadius) {
-            return newPosition.normalize().multiply(externalWallRadius);
+            return newPosition.normalize().multiply(externalWallRadius - MIN_RADIUS);
         }
         else {
             return newPosition;
