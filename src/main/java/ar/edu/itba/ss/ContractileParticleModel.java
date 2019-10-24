@@ -47,10 +47,9 @@ public class ContractileParticleModel {
 
     private void generateParticles(int particlesQuantity) {
         for(int i = 0; i < particlesQuantity; i++) {
-
             Point2D newPosition = getNewParticlePosition();
             Point2D initialVelocity = getInitialVelocity(newPosition);
-            particles.add(new Particle(i, MAX_RADIUS, newPosition, initialVelocity));
+            particles.add(new Particle(i, MAX_RADIUS, newPosition, initialVelocity, false));
         }
     }
 
@@ -100,10 +99,10 @@ public class ContractileParticleModel {
     public void perform(double maxTime) {
         double time = 0;
         while(time < maxTime) {
-            particles = findContactsAndUpdateEscapeVelocity(particles);
-            particles = updateRadius(particles);
-            particles = calculateParticleVelocities(particles);
-            particles = updateParticlesPosition(particles);
+//            particles = findContactsAndUpdateEscapeVelocity(particles);
+//            particles = updateRadius(particles);
+//            particles = calculateParticleVelocities(particles);
+//            particles = updateParticlesPosition(particles);
             cellIndexMethod.nextStep(particles);
             time += DT;
         }

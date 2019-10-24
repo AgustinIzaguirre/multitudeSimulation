@@ -7,10 +7,11 @@ public class Particle {
     private final double radius;
     private final Point2D position;
     private final Point2D velocity;
+    private final boolean escapeVelocity;
 
 
 
-    public Particle(int id, double radius, Point2D position, Point2D velocity) {
+    public Particle(int id, double radius, Point2D position, Point2D velocity, boolean escapeVelocity) {
         this.id = id;
         this.radius = radius;
         this.position = new Point2D(position.getX(), position.getY());
@@ -20,12 +21,13 @@ public class Particle {
         else {
             this.velocity = null;
         }
+        this.escapeVelocity = escapeVelocity;
     }
 
 
 
-    public Particle copy(Point2D position, Point2D velocity) {
-        return new Particle(id, radius, position, velocity);
+    public Particle copy(Point2D position, Point2D velocity, boolean escapeVelocity) {
+        return new Particle(id, radius, position, velocity, escapeVelocity);
 
     }
 
@@ -48,6 +50,10 @@ public class Particle {
 
     public double getSpeed() {
         return getVelocity().magnitude();
+    }
+
+    public boolean isEscapeVelocity() {
+        return escapeVelocity;
     }
 
     public Point2D getDistance(Particle other) {
