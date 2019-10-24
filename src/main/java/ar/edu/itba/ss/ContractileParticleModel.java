@@ -14,6 +14,8 @@ public class ContractileParticleModel {
     private static final double TAU             = 0.5;
     private static final double DT              = 0.05;
     private static final double DESIRED_SPEED   = 1.55;
+    private static final double ESCAPE_SPEED    = DESIRED_SPEED;
+
     private static int particlesQuantity;
     private List<Wall> walls;
     private List<Particle> particles;
@@ -99,22 +101,24 @@ public class ContractileParticleModel {
     public void perform(double maxTime) {
         double time = 0;
         while(time < maxTime) {
+//            generateVisualOutput();
             particles = findContactsAndUpdateEscapeVelocity(particles);
             particles = updateRadius(particles);
-//            particles = calculateParticleVelocities(particles);
-//            particles = updateParticlesPosition(particles);
+            particles = calculateParticleVelocities(particles);
+            particles = updateParticlesPosition(particles);
             cellIndexMethod.nextStep(particles);
             time += DT;
         }
 
     }
 
-
-
     private List<Particle> findContactsAndUpdateEscapeVelocity(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
         Point2D escapeVelocity = Point2D.ZERO;
         for(Particle particle : particles) {
+            for(Wall wall : walls) {
+                escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, wall));
+            }
             List<Particle> neighbours = cellIndexMethod.findNeighbors(particle);
             for(Particle neighbour : neighbours) {
                 escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, neighbour));
@@ -124,7 +128,7 @@ public class ContractileParticleModel {
                                                                     particle.getVelocity(), false));
             }
             else {
-                escapeVelocity = escapeVelocity.normalize().multiply(DESIRED_SPEED);
+                escapeVelocity = escapeVelocity.normalize().multiply(ESCAPE_SPEED);
                 newParticles.add(new Particle(particle.getId(), MIN_RADIUS, particle.getPosition(),
                                                                     escapeVelocity, true));
 
@@ -145,6 +149,17 @@ public class ContractileParticleModel {
         }
     }
 
+    private Point2D getEscapeVelocity(Particle currentParticle, Wall wall) {
+        Point2D escapeVector = currentParticle.getPosition();
+        double distance = wall.getDistance(currentParticle).magnitude();
+        if(distance < currentParticle.getRadius()) {
+            return escapeVector.normalize();
+        }
+        else {
+            return Point2D.ZERO;
+        }
+    }
+
     private List<Particle> updateRadius(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
         for(Particle particle : particles) {
@@ -154,6 +169,32 @@ public class ContractileParticleModel {
                     particle.getVelocity(), particle.isEscapeVelocity()));
         }
 
+        return newParticles;
+    }
+
+    private List<Particle> calculateParticleVelocities(List<Particle> particles) {
+        List<Particle> newParticles = new ArrayList<>();
+        for(Particle particle : particles) {
+            if(!particle.isEscapeVelocity()) {
+                double fraction = (particle.getRadius() - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
+                double speed = Math.pow(fraction, BETA);
+                Point2D velocity = particle.getTangentVersor().multiply(speed);
+                newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(), velocity, false));
+            }
+            else {
+                newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(), particle.getVelocity(), true));
+            }
+        }
+        return newParticles;
+    }
+
+    private List<Particle> updateParticlesPosition(List<Particle> particles) {
+        List<Particle> newParticles = new ArrayList<>();
+        for(Particle particle : particles) {
+            Point2D deltaPosition = particle.getVelocity().multiply(DT);
+            Point2D newPosition = particle.getPosition().add(deltaPosition); //TODO maybe validate boundaries?
+            newParticles.add(new Particle(particle.getId(), particle.getRadius(), newPosition, particle.getVelocity(), particle.isEscapeVelocity()));
+        }
         return newParticles;
     }
 }

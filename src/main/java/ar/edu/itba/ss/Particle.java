@@ -83,4 +83,8 @@ public class Particle {
         return getId() == ((Particle) other).getId();
     }
 
+    public Point2D getTangentVersor() {
+        Point2D normalVersor = position.normalize();
+        return new Point2D(-normalVersor.getY(), normalVersor.getX());
+    }
 }
