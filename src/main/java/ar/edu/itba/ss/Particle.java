@@ -56,6 +56,11 @@ public class Particle {
         return escapeVelocity;
     }
 
+    public Point2D getTangentVersor() {
+        Point2D normalVersor = position.normalize();
+        return new Point2D(-normalVersor.getY(), normalVersor.getX());
+    }
+
     public Point2D getDistance(Particle other) {
         return position.subtract(other.position);
     }
@@ -65,7 +70,7 @@ public class Particle {
     }
 
     @Override
-    public String toString() {//TODO: maybe add acceleration
+    public String toString() {
         return id + "\t" + radius + "\t" + position.getX() + "\t" + position.getY()
                 + "\t" + velocity.getX() + "\t" + velocity.getY() + "\t" + getSpeed();
     }
@@ -83,8 +88,5 @@ public class Particle {
         return getId() == ((Particle) other).getId();
     }
 
-    public Point2D getTangentVersor() {
-        Point2D normalVersor = position.normalize();
-        return new Point2D(-normalVersor.getY(), normalVersor.getX());
-    }
+
 }

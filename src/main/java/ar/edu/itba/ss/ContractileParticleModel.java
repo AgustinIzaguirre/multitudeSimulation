@@ -3,6 +3,9 @@ package ar.edu.itba.ss;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import javafx.geometry.Point2D;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +18,7 @@ public class ContractileParticleModel {
     private static final double DT              = 0.05;
     private static final double DESIRED_SPEED   = 1.55;
     private static final double ESCAPE_SPEED    = DESIRED_SPEED;
+    private static final int STEPS_TO_PRINT     = 1;
 
     private static int particlesQuantity;
     private List<Wall> walls;
@@ -23,6 +27,7 @@ public class ContractileParticleModel {
     private double externalWallRadius;
     private CellIndexMethod cellIndexMethod;
     private Random random;
+    private int idFile;
 
 
     public ContractileParticleModel(double internalWallRadius, double externalWallRadius,
@@ -45,6 +50,7 @@ public class ContractileParticleModel {
         this.particlesQuantity = particlesQuantity;
         generateParticles(particlesQuantity);
         cellIndexMethod =  new CellIndexMethod(externalWallRadius, externalWallRadius, particles, 2 * MAX_RADIUS);
+        idFile = 0;
     }
 
     private void generateParticles(int particlesQuantity) {
@@ -98,8 +104,10 @@ public class ContractileParticleModel {
         return tangentVersor.multiply(DESIRED_SPEED);
     }
 
-    public void perform(double maxTime) {
+    public void perform(double maxTime) throws IOException {
         double time = 0;
+        int step = 0;
+        BufferedWriter writer = initOutput(step);
         while(time < maxTime) {
 //            generateVisualOutput();
             particles = findContactsAndUpdateEscapeVelocity(particles);
@@ -108,6 +116,13 @@ public class ContractileParticleModel {
             particles = updateParticlesPosition(particles);
             cellIndexMethod.nextStep(particles);
             time += DT;
+            step++;
+            if(step % STEPS_TO_PRINT == 0) {
+                System.out.println(time);
+                printParticles(writer);
+                writer.close();
+                writer = initOutput(step);
+            }
         }
 
     }
@@ -197,4 +212,22 @@ public class ContractileParticleModel {
         }
         return newParticles;
     }
+
+    private BufferedWriter initOutput(int step) throws IOException {
+        BufferedWriter writer = null;
+        if(step % STEPS_TO_PRINT == 0) {
+            writer = new BufferedWriter(new FileWriter("./Output/output" + idFile + ".xyz"));
+            idFile++;
+            writer.write(particles.size() + "\n");
+            writer.write("Lattice=\"" + MAX_RADIUS + " 0.0 0.0 0.0 " + MAX_RADIUS + " 0.0 0.0 0.0 1.0\" Properties=Id:R:1:Radius:R:1:Pos:R:2:Velocity:R:2:Speed:R:1 \n");
+        }
+        return writer;
+    }
+
+    private void printParticles(BufferedWriter writer) throws IOException {
+        for (Particle p : particles) {
+            writer.write(p.toString() + "\n");
+        }
+    }
+
 }
