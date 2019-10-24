@@ -19,6 +19,7 @@ public class ContractileParticleModel {
     private List<Particle> particles;
     private double internalWallRadius;
     private double externalWallRadius;
+    private CellIndexMethod cellIndexMethod;
     private Random random;
 
 
@@ -41,6 +42,7 @@ public class ContractileParticleModel {
         walls.add(new Wall(externalWallRadius));
         this.particlesQuantity = particlesQuantity;
         generateParticles(particlesQuantity);
+        cellIndexMethod =  new CellIndexMethod(externalWallRadius, externalWallRadius, particles, 2 * MAX_RADIUS);
     }
 
     private void generateParticles(int particlesQuantity) {
@@ -96,6 +98,15 @@ public class ContractileParticleModel {
     }
 
     public void perform(double maxTime) {
+        double time = 0;
+        while(time < maxTime) {
+            particles = findContactsAndUpdateEscapeVelocity(particles);
+            particles = updateRadius(particles);
+            particles = calculateParticleVelocities(particles);
+            particles = updateParticlesPosition(particles);
+            cellIndexMethod.nextStep(particles);
+            time += DT;
+        }
 
     }
 }
