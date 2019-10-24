@@ -249,4 +249,35 @@ public class ContractileParticleModel {
         }
     }
 
+    public void performWritingOutput(double maxTime, double minTime, BufferedWriter resultWriter, double density) throws IOException {
+        double time = 0;
+        int step = 0;
+
+        while(time < maxTime) {
+            particles = findContactsAndUpdateEscapeVelocity(particles);
+            particles = updateRadius(particles);
+            particles = calculateParticleVelocities(particles);
+            particles = updateParticlesPosition(particles);
+            cellIndexMethod.nextStep(particles);
+            time += DT;
+            step++;
+            if(step % STEPS_TO_PRINT == 0) {
+                System.out.println(time);
+                if(time >= minTime) {
+                    printOutput(resultWriter, time, density);
+                }
+            }
+        }
+    }
+
+    private void printOutput(BufferedWriter resultWriter, double time, double density) throws IOException {
+        for(Particle particle : particles) {
+            Point2D tangentVersor = particle.getTangentVersor();
+            double speedProjected = tangentVersor.dotProduct(particle.getVelocity());
+            double x = particle.getPosition().getX();
+            double y = particle.getPosition().getY();
+            resultWriter.write(time + "," + x + "," + y + "," + speedProjected + "," + particle.getRadius() + "," + density + "\n");
+        }
+
+    }
 }
