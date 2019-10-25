@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Random;
 
 public class ContractileParticleModel {
-    private static final double MIN_RADIUS      = 0.15;
-    private static final double MAX_RADIUS      = 0.32;
+    private static final double MIN_RADIUS      = 0.10;
+    private static final double MAX_RADIUS      = 0.37;
     private static final double BETA            = 0.9;
     private static final double TAU             = 0.5;
     private static final double DT              = 0.05;
-    private static final double DESIRED_SPEED   = 1.55;
+    private static final double DESIRED_SPEED   = 0.95;
     private static final double ESCAPE_SPEED    = DESIRED_SPEED;
     private static final int STEPS_TO_PRINT     = 2;
 
@@ -56,6 +56,7 @@ public class ContractileParticleModel {
     private void generateParticles(int particlesQuantity) {
         particles = new ArrayList<>();
         for(int i = 0; i < particlesQuantity; i++) {
+            System.out.println(i + "\n");
             Point2D newPosition = getNewParticlePosition();
             Point2D initialVelocity = getInitialVelocity(newPosition);
             particles.add(new Particle(i, MIN_RADIUS, newPosition, initialVelocity, false));
@@ -113,6 +114,7 @@ public class ContractileParticleModel {
         writer.close();
 
         while(time < maxTime) {
+            step++;
             writer = initOutput(step);
             particles = findContactsAndUpdateEscapeVelocity(particles);
             particles = updateRadius(particles);
@@ -120,7 +122,6 @@ public class ContractileParticleModel {
             particles = updateParticlesPosition(particles);
             cellIndexMethod.nextStep(particles);
             time += DT;
-            step++;
             if(step % STEPS_TO_PRINT == 0) {
                 System.out.println(time);
                 printParticles(writer);
@@ -233,9 +234,10 @@ public class ContractileParticleModel {
     }
 
     private BufferedWriter initOutput(int step) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("./Output/output" + idFile + ".xyz"));
+        BufferedWriter writer = null;
 
         if(step % STEPS_TO_PRINT == 0) {
+            writer = new BufferedWriter(new FileWriter("./Output/output" + idFile + ".xyz"));
             idFile++;
             writer.write(particles.size() + "\n");
             writer.write("Lattice=\"" + externalWallRadius + " 0.0 0.0 0.0 " + externalWallRadius + " 0.0 0.0 0.0 1.0\" Properties=Id:R:1:Radius:R:1:Pos:R:2:Velocity:R:2:Speed:R:1 \n");
