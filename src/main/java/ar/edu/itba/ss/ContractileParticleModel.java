@@ -58,7 +58,7 @@ public class ContractileParticleModel {
         for(int i = 0; i < particlesQuantity; i++) {
             Point2D newPosition = getNewParticlePosition();
             Point2D initialVelocity = getInitialVelocity(newPosition);
-            particles.add(new Particle(i, MAX_RADIUS, newPosition, initialVelocity, false));
+            particles.add(new Particle(i, MIN_RADIUS, newPosition, initialVelocity, false));
         }
     }
 
@@ -69,8 +69,8 @@ public class ContractileParticleModel {
         double maxSpaceAvailable, centerDistance, angle;
         Point2D newParticlePosition = null;
         while(!validPosition) {
-            maxSpaceAvailable = externalWallRadius - (2 * MAX_RADIUS + internalWallRadius);
-            centerDistance = random.nextDouble() * (maxSpaceAvailable) + internalWallRadius;
+            maxSpaceAvailable = externalWallRadius - (2 * MIN_RADIUS + internalWallRadius);
+            centerDistance = random.nextDouble() * (maxSpaceAvailable) + internalWallRadius + MIN_RADIUS;
             angle = random.nextDouble() * 2.0 * Math.PI;
             newParticlePosition = getPosition(centerDistance, angle);
             if (!isOverlapping(newParticlePosition)) {
@@ -88,7 +88,7 @@ public class ContractileParticleModel {
 
     private boolean isOverlapping(Point2D newParticlePosition) {
        for(Particle particle : particles) {
-            if(getParticlesDistance(particle.getPosition(), newParticlePosition) < 2 * MAX_RADIUS) {
+            if(getParticlesDistance(particle.getPosition(), newParticlePosition) < 2 * MIN_RADIUS) {
                 return true;
             }
         }
@@ -102,7 +102,7 @@ public class ContractileParticleModel {
     private Point2D getInitialVelocity(Point2D newPosition) {
         Point2D normalVersor = newPosition.normalize();
         Point2D tangentVersor = new Point2D(-normalVersor.getY(), normalVersor.getX());
-        return tangentVersor.multiply(DESIRED_SPEED);
+        return tangentVersor.multiply(0);
     }
 
     public void perform(double maxTime) throws IOException {
@@ -233,9 +233,9 @@ public class ContractileParticleModel {
     }
 
     private BufferedWriter initOutput(int step) throws IOException {
-        BufferedWriter writer = null;
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./Output/output" + idFile + ".xyz"));
+
         if(step % STEPS_TO_PRINT == 0) {
-            writer = new BufferedWriter(new FileWriter("./Output/output" + idFile + ".xyz"));
             idFile++;
             writer.write(particles.size() + "\n");
             writer.write("Lattice=\"" + externalWallRadius + " 0.0 0.0 0.0 " + externalWallRadius + " 0.0 0.0 0.0 1.0\" Properties=Id:R:1:Radius:R:1:Pos:R:2:Velocity:R:2:Speed:R:1 \n");
