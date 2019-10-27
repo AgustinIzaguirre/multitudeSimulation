@@ -14,6 +14,8 @@ public class CellIndexMethod {
     private List<Particle> particles;
     private int rows;
     private int cols;
+    private double baseX;
+    private double baseY;
     private double cellHeight;
     private double cellWidth;
     private boolean borderProperty;
@@ -27,6 +29,22 @@ public class CellIndexMethod {
         this.particles = particles;
         this.borderProperty = false;
         this.maxReach = reach;
+        this.baseX = 0;
+        this.baseY = 0;
+
+        generateCells();
+        loadCells();
+    }
+
+    public CellIndexMethod(double width, double height, List<Particle> particles, double reach,
+                           double baseX, double baseY) {
+        this.width = width;
+        this.height = height;
+        this.particles = particles;
+        this.borderProperty = false;
+        this.maxReach = reach;
+        this.baseX = baseX;
+        this.baseY = baseY;
 
         generateCells();
         loadCells();
@@ -50,8 +68,9 @@ public class CellIndexMethod {
 
     private void loadCells() {
         particles.forEach(particle -> {
-            int row = (int) (particle.getPosition().getY() / cellHeight);
-            int col = (int) (particle.getPosition().getX() / cellWidth);
+            Point2D position = particle.getPosition().add(new Point2D(baseX, baseY));
+            int row = (int) (position.getY() / cellHeight);
+            int col = (int) (position.getX() / cellWidth);
             int cell = getCell(row, col);
 
 
@@ -73,8 +92,9 @@ public class CellIndexMethod {
     }
 
     private int getCell(Particle particle) {
-        int row = (int) (particle.getPosition().getY() / cellHeight);
-        int col = (int) (particle.getPosition().getX() / cellWidth);
+        Point2D position = particle.getPosition().add(new Point2D(baseX, baseY));
+        int row = (int) (position.getY() / cellHeight);
+        int col = (int) (position.getX() / cellWidth);
         return getCell(row, col);
     }
 
@@ -115,7 +135,10 @@ public class CellIndexMethod {
     }
 
     public boolean isInRadius(Particle p1, Particle p2) {
-        double centerDistance = p1.getPosition().distance(p2.getPosition());
+        Point2D p1Position = p1.getPosition().add(new Point2D(baseX, baseY));
+        Point2D p2Position = p2.getPosition().add(new Point2D(baseX, baseY));
+
+        double centerDistance = p1Position.distance(p2Position);
         if(p1.equals(p2) || ( !borderProperty && centerDistance > maxReach)) {
             return false;
         }

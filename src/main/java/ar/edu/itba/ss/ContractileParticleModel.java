@@ -49,7 +49,8 @@ public class ContractileParticleModel {
         walls.add(new Wall(externalWallRadius));
         this.particlesQuantity = particlesQuantity;
         generateParticles(particlesQuantity);
-        cellIndexMethod =  new CellIndexMethod(externalWallRadius, externalWallRadius, particles, 2 * MAX_RADIUS);
+        cellIndexMethod =  new CellIndexMethod(2 * externalWallRadius, 2 * externalWallRadius, particles,
+                    2 * MAX_RADIUS, externalWallRadius, externalWallRadius);
         idFile = 0;
     }
 
@@ -84,7 +85,7 @@ public class ContractileParticleModel {
     private Point2D getPosition(double centerDistance, double angle) {
         double x = centerDistance * Math.cos(angle);
         double y = centerDistance * Math.sin(angle);
-        return new Point2D(x, y);
+        return new Point2D(x, y );
     }
 
     private boolean isOverlapping(Point2D newParticlePosition) {
@@ -151,6 +152,14 @@ public class ContractileParticleModel {
                     isColliding = true;
                 }
             }
+//            for(Particle neighbour : particles) {
+//                if(neighbour.getId() != particle.getId()) {
+//                    escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, neighbour));
+//                    if(escapeVelocity.getX() != 0 || escapeVelocity.getY() != 0) {
+//                        isColliding = true;
+//                    }
+//                }
+//            }
 
             if(!isColliding) {
                 newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(),
@@ -292,7 +301,7 @@ public class ContractileParticleModel {
         for(Particle particle : particles) {
             Point2D tangentVersor = particle.getTangentVersor();
             if(!particle.isEscapeVelocity()) {
-                double speedProjected = Math.abs(tangentVersor.dotProduct(particle.getVelocity()));
+                double speedProjected = tangentVersor.dotProduct(particle.getVelocity());
                 double x = particle.getPosition().getX();
                 double y = particle.getPosition().getY();
                 resultWriter.write(time + "," + x + "," + y + "," + speedProjected + "," + particle.getRadius() + "," + density + "\n");
