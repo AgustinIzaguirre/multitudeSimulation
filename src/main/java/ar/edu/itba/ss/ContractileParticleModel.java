@@ -135,14 +135,24 @@ public class ContractileParticleModel {
         List<Particle> newParticles = new ArrayList<>();
         for(Particle particle : particles) {
             Point2D escapeVelocity = Point2D.ZERO;
+            boolean isColliding = false;
             for(Wall wall : walls) {
                 escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, wall));
+
+                if(escapeVelocity.getX() != 0 || escapeVelocity.getY() != 0) {
+                    isColliding = true;
+                }
+
             }
             List<Particle> neighbours = cellIndexMethod.findNeighbors(particle);
             for(Particle neighbour : neighbours) {
                 escapeVelocity = escapeVelocity.add(getEscapeVelocity(particle, neighbour));
+                if(escapeVelocity.getX() != 0 || escapeVelocity.getY() != 0) {
+                    isColliding = true;
+                }
             }
-            if(escapeVelocity.getX() == 0 && escapeVelocity.getY() == 0) {
+
+            if(!isColliding) {
                 newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(),
                                                                     particle.getVelocity(), false));
             }
@@ -160,7 +170,7 @@ public class ContractileParticleModel {
     private Point2D getEscapeVelocity(Particle currentParticle, Particle neighbour) {
         Point2D escapeVector = currentParticle.getPosition().subtract(neighbour.getPosition());
         double distance = escapeVector.magnitude();
-        if(distance < currentParticle.getRadius() + neighbour.getRadius()) {
+        if(distance <= currentParticle.getRadius() + neighbour.getRadius()) {
             return escapeVector.normalize();
         }
         else {
@@ -185,10 +195,16 @@ public class ContractileParticleModel {
     private List<Particle> updateRadius(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
         for(Particle particle : particles) {
-            double deltaRadius = MAX_RADIUS / (TAU / DT);
-            double newRadius = Math.min(MAX_RADIUS, particle.getRadius() + deltaRadius);
-            newParticles.add(new Particle(particle.getId(), newRadius, particle.getPosition(),
-                    particle.getVelocity(), particle.isEscapeVelocity()));
+            if(!particle.isEscapeVelocity()) {
+                double deltaRadius = MAX_RADIUS / (TAU / DT);
+                double newRadius = Math.min(MAX_RADIUS, particle.getRadius() + deltaRadius);
+                newParticles.add(new Particle(particle.getId(), newRadius, particle.getPosition(),
+                        particle.getVelocity(), particle.isEscapeVelocity()));
+            }
+            else {
+                newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(),
+                        particle.getVelocity(), particle.isEscapeVelocity()));
+            }
         }
 
         return newParticles;
@@ -275,10 +291,12 @@ public class ContractileParticleModel {
     private void printOutput(BufferedWriter resultWriter, double time, double density) throws IOException {
         for(Particle particle : particles) {
             Point2D tangentVersor = particle.getTangentVersor();
-            double speedProjected = tangentVersor.dotProduct(particle.getVelocity());
-            double x = particle.getPosition().getX();
-            double y = particle.getPosition().getY();
-            resultWriter.write(time + "," + x + "," + y + "," + speedProjected + "," + particle.getRadius() + "," + density + "\n");
+            if(!particle.isEscapeVelocity()) {
+                double speedProjected = Math.abs(tangentVersor.dotProduct(particle.getVelocity()));
+                double x = particle.getPosition().getX();
+                double y = particle.getPosition().getY();
+                resultWriter.write(time + "," + x + "," + y + "," + speedProjected + "," + particle.getRadius() + "," + density + "\n");
+            }
         }
 
     }
