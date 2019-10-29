@@ -16,7 +16,7 @@ public class ContractileParticleModel {
     private static final double BETA            = 0.9;
     private static final double TAU             = 0.5;
     private static final double DT              = 0.05;
-    private static final double DESIRED_SPEED   = 0.95;
+    private static final double DESIRED_SPEED   = 0.916;
     private static final double ESCAPE_SPEED    = DESIRED_SPEED;
     private static final int STEPS_TO_PRINT     = 2;
 
@@ -224,7 +224,7 @@ public class ContractileParticleModel {
         for(Particle particle : particles) {
             if(!particle.isEscapeVelocity()) {
                 double fraction = (particle.getRadius() - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS);
-                double speed = Math.pow(fraction, BETA);
+                double speed = DESIRED_SPEED * Math.pow(fraction, BETA);
                 Point2D velocity = particle.getTangentVersor().multiply(speed);
                 newParticles.add(new Particle(particle.getId(), particle.getRadius(), particle.getPosition(), velocity, false));
             }
@@ -300,12 +300,12 @@ public class ContractileParticleModel {
     private void printOutput(BufferedWriter resultWriter, double time, double density) throws IOException {
         for(Particle particle : particles) {
             Point2D tangentVersor = particle.getTangentVersor();
-            if(!particle.isEscapeVelocity()) {
+//            if(!particle.isEscapeVelocity()) {
                 double speedProjected = tangentVersor.dotProduct(particle.getVelocity());
                 double x = particle.getPosition().getX();
                 double y = particle.getPosition().getY();
                 resultWriter.write(time + "," + x + "," + y + "," + speedProjected + "," + particle.getRadius() + "," + density + "\n");
-            }
+//            }
         }
 
     }
