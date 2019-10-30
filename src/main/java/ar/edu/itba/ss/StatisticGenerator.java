@@ -12,15 +12,15 @@ public class StatisticGenerator {
                                 2.478,2.655,2.832,3.009,3.186,3.363,3.540,3.717,3.894,4.071,4.248,4.425,4.602,4.779,
                                 4.956,5.133,5.310,5.487,5.664,5.841,6.018,6.195,6.372,6.549,6.726,6.903,7.080,7.257,
                                 7.434,7.611,7.788,7.965,8.142};
-        double internalWallRadius = 3;
-        double externalWallRadius = 4;
+        double internalWallRadius = 2;
+        double externalWallRadius = 7;
         double beta = 0.9;
         generateFundamentalDiagramOutput(internalWallRadius,externalWallRadius, 4, densities, beta);
     }
 
     public static void generateFundamentalDiagramOutput(double internalWallRadius, double externalWallRadius, int runs,
                                                         double[] densities, double beta) throws IOException, InvalidArgumentException {
-        String path = "Output/Results/ancho1/";
+        String path = "Output/Results/ancho5/";
         double totalArea = Math.PI * (Math.pow(externalWallRadius, 2) - Math.pow(internalWallRadius, 2));
         for(int i = 0; i < densities.length; i++) {
             double density = densities[i];

@@ -25,11 +25,26 @@ ylabel("Error cuadratico medio", "fontsize", 20);
 print -djpg ./BetaError.jpg;
 
 
-Betas = [0.8 0.9 1.0]
-Error = [Error(8) Error(9) Error(10)]
+Betas = [0.7,0.8 0.9 1.0]
+Error = [Error(7) Error(8) Error(9) Error(10)]
 figure(2)
 scatter(Betas, Error);
 xlabel("Valores de beta", "fontsize", 20);
 ylabel("Error cuadratico medio", "fontsize", 20);
 
 print -djpg ./BetaErrorAcercamiento.jpg;
+
+
+figure(2)
+scatter(Densities, BetaMeanSpeed(8,:));
+hold on;
+
+predtechenski = scatter(Densities, ExpectedSpeed)
+
+xlabel("Densidad (1 / m^2)", "fontsize", 20);
+ylabel("Velocidad (m / s)", "fontsize", 20);
+hold on;
+errorbar(Densities, BetaMeanSpeed(8,:), BetaStdSpeed(8,:), "k");
+h = legend([predtechenski],"Predtechenskii and Milinskii");
+set(h, "fontsize", 20);
+print -djpg ./diference.jpg;
