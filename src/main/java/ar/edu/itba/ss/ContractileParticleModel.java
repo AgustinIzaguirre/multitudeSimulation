@@ -13,7 +13,7 @@ import java.util.Random;
 public class ContractileParticleModel {
     private static final double MIN_RADIUS      = 0.10;
     private static final double MAX_RADIUS      = 0.37;
-    private static final double BETA            = 0.9;
+    private static double BETA            = 0.9; //TODO add final after generating results
     private static final double TAU             = 0.5;
     private static final double DT              = 0.05;
     private static final double DESIRED_SPEED   = 0.916;
@@ -52,6 +52,10 @@ public class ContractileParticleModel {
         cellIndexMethod =  new CellIndexMethod(2 * externalWallRadius, 2 * externalWallRadius, particles,
                     2 * MAX_RADIUS, externalWallRadius, externalWallRadius);
         idFile = 0;
+    }
+
+    public void setBeta(double beta) { //TODO remove after generating data
+        BETA = beta;
     }
 
     private void generateParticles(int particlesQuantity) {
