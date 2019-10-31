@@ -18,4 +18,12 @@ ancho2 = scatter(Densities, PedtechenskiiSpeed);
 ancho3 = scatter(helbingDensities, helbingSpeed);
 ancho4 = scatter(moriDensities, moriSpeed);
 
-h = legend([ancho1,ancho2,ancho3,ancho4],{'Nuestro','Predtechenskii Milinskii','Helbing','Mori Tsukaguchi'});
+xlabel("Densidad (1 / m^2)", "fontsize", 20);
+ylabel("Velocidad (m / s)", "fontsize", 20);
+hold on;
+errorbar(Densities, ExperimentalSpeed, ExperimentalStd, "k");
+
+h = legend([ancho1,ancho2,ancho3,ancho4],{'Contractile Particle Model','Predtechenskii Milinskii','Helbing','Mori Tsukaguchi'});
+set(h, "interpreter", "latex");
+
+print -djpg ./literatureDiagramWithError.jpg
